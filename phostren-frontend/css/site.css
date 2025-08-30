@@ -22,5 +22,6 @@ h2 {
 }
 
 .big_photo {
-    width: 1080px;
+    width: auto;
+    height: 1920px;
 }
