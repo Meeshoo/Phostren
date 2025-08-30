@@ -8,15 +8,16 @@
         <link rel="shortcut icon" type="image/png" href="img/favicon.png" />
         <link rel="stylesheet" type="text/css" href="css/site.css" />
         <link href="https://fonts.googleapis.com/css?family=Tomorrow&display=swap" rel="stylesheet">
+        <meta name="htmx-config" content='{"selfRequestsOnly":false}'>
     </head>
 
     <body>
 
         <div id="main"
-            hx-get="http://localhost:8000/getwidgetphoto"
+            hx-get="http://localhost:8000/getwidgetphoto?display_duration=3"
             hx-target="#latest_photo"
             hx-swap="innerHTML"
-            hx-trigger="load, every 3s">
+            hx-trigger="every 10s">
             <div id="latest_photo"></div>
         </div>
 
