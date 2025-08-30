@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<script src="pkgs/htmx.min.js" defer></script>
+
+<html>
+    <head>
+        <title>Phostren</title>
+        <link rel="shortcut icon" type="image/png" href="img/favicon.png" />
+        <link rel="stylesheet" type="text/css" href="css/site.css" />
+        <link href="https://fonts.googleapis.com/css?family=Tomorrow&display=swap" rel="stylesheet">
+    </head>
+
+    <body>
+
+        <div id="main"
+            hx-get="http://localhost:8000/getallphotos"
+            hx-target="#photo_list"
+            hx-swap="innerHTML"
+            hx-trigger="load, every 60s">
+            <h2>Photos from the last 24 hours</h2>
+            <div id="photo_list"></div>
+        </div>
+
+    </body>
+</html>
