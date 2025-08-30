@@ -44,8 +44,11 @@ jobs:
       - name: Bodge in BASE URL
         run: sed -i 's%http\:\/\/127\.0\.0\.1\:5500%${{ secrets.BASE_URL }}%' phostren-backend/Program.cs
 
-      - name: Bodge in BASE URL
+      - name: Bodge in API URL
         run: sed -i 's%http\:\/\/127\.0\.0\.1\:8000%${{ secrets.API_URL }}%' phostren-backend/Program.cs
+
+      - name: Bodge in PHOTO_LOCATION
+        run: sed -i 's%\.\.\/phostren-frontend\/photos%${{ secrets.PHOTO_LOCATION }}%' phostren-backend/Program.cs
 
       - name: Build DotNet app
         run: mkdir -p output  && dotnet build phostren-backend/phostren.csproj -o output/
