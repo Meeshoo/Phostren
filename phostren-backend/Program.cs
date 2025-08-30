@@ -50,7 +50,7 @@ app.MapGet("/getlatestphoto", () => {
 
     Photo latestPhoto = getLatestPhoto();
 
-    return @$"<img class=""photo"" src=""{latestPhoto.filename}""></img>";
+    return @$"<img class=""photo big_photo"" src=""{latestPhoto.filename}""></img>";
 
 });
 
@@ -61,7 +61,7 @@ app.MapGet("/getwidgetphoto", ([FromQuery(Name = "display_duration")] string dis
     DateTime now = DateTime.Now;
 
     if (latestPhoto.dateTaken > now.AddSeconds(-15)){
-        return @$"<img class=""photo widget_photo"" src=""{latestPhoto}""></img>";
+        return @$"<img class=""photo big_photo widget_photo"" src=""{latestPhoto}""></img>";
     } else {
         return "";
     }
@@ -128,7 +128,7 @@ static string galleryTemplate(List<String> photos) {
     ";
 
     foreach (string photo in photos) {
-        response += @$"<img class=""photo"" src=""{photo}""></img>";
+        response += @$"<img class=""gallery_photo"" src=""{photo}""></img>";
     }
 
     return response;

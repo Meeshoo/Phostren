@@ -14,7 +14,11 @@ h2 {
     flex-direction: row;
 }
 
-.photo {
+.gallery_photo {
     margin: 20px;
     width: 300px;
+}
+
+.big_photo {
+    width: 1080px;
 }
