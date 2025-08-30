@@ -17,6 +17,10 @@ build {
     inline = ["mkdir /phostren"]
   }
 
+  provisioner "shell" {
+    inline = ["mkdir s"]
+  }
+
   provisioner "file" {
     source = "../output/"
     destination = "/phostren"
