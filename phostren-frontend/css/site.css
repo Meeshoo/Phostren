@@ -12,11 +12,13 @@ h2 {
 #photo_list {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
 }
 
 .gallery_photo {
     margin: 20px;
-    width: 300px;
+    width: auto;
+    height: 400px;
 }
 
 .big_photo {
