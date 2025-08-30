@@ -1,0 +1,6 @@
+@phostren_HostAddress = http://localhost:5007
+
+GET {{phostren_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

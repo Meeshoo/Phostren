@@ -1,0 +1,145 @@
+using Microsoft.AspNetCore.Mvc;
+using ExifLib;
+
+
+string BASE_URL = "http://127.0.0.1:5500";
+string API_URL = "http://127.0.0.1:8000";
+string PHOTO_LOCATION = "../phostren-frontend/photos";
+
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddCors();
+
+var app = builder.Build();
+
+
+app.UseCors( x => x
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .WithOrigins(BASE_URL));
+
+
+// Endpoints
+app.MapGet("/getallphotos", () => {
+
+    DateTime now = DateTime.Now;
+    List<String> photos = new List<string>();
+
+    foreach (string file in Directory.GetFiles(PHOTO_LOCATION)) {
+
+        ExifReader reader = new ExifReader(file);
+
+        DateTime datePictureTaken;
+        if (reader.GetTagValue<DateTime>(ExifTags.DateTimeDigitized, out datePictureTaken)) {
+
+            if (datePictureTaken > now.AddDays(-1)) {
+                photos.Add(file);
+            }
+        }
+    }
+
+    // SORT PHOTOS BY DATE
+
+    return galleryTemplate(photos);
+
+});
+
+app.MapGet("/getlatestphoto", () => {
+
+    Photo latestPhoto = getLatestPhoto();
+
+    return @$"<img class=""photo"" src=""{latestPhoto.filename}""></img>";
+
+});
+
+app.MapGet("/getwidgetphoto", ([FromQuery(Name = "display_duration")] string displayDuration) => {
+
+    Photo latestPhoto = getLatestPhoto();
+
+    DateTime now = DateTime.Now;
+
+    if (latestPhoto.dateTaken > now.AddSeconds(-15)){
+        return @$"<img class=""photo widget_photo"" src=""{latestPhoto}""></img>";
+    } else {
+        return "";
+    }
+
+});
+
+app.MapGet("/imagecleanup", () => {
+
+        DateTime now = DateTime.Now;
+
+        foreach (string file in Directory.GetFiles(PHOTO_LOCATION)) {
+
+            ExifReader reader = new ExifReader(file);
+
+            DateTime datePictureTaken;
+            if (reader.GetTagValue<DateTime>(ExifTags.DateTimeDigitized, out datePictureTaken)) {
+
+                if (datePictureTaken < now.AddDays(-1)) {
+                    File.Delete(file);
+                }
+            }
+        }
+});
+
+
+// Functions
+Photo getLatestPhoto() {
+
+    string latestPhotoFilename = "";
+    DateTime latestPhotoDateTime = DateTime.Now.AddYears(-30);
+
+    foreach (string file in Directory.GetFiles(PHOTO_LOCATION))
+    {
+
+        ExifReader reader = new ExifReader(file);
+
+        DateTime datePictureTaken;
+
+        if (reader.GetTagValue<DateTime>(ExifTags.DateTimeDigitized, out datePictureTaken))
+        {
+
+            if (datePictureTaken > latestPhotoDateTime)
+            {
+                latestPhotoDateTime = datePictureTaken;
+                latestPhotoFilename = file;
+            }
+        }
+    }
+
+    Photo photo = new() {
+        filename = latestPhotoFilename,
+        dateTaken = latestPhotoDateTime
+    };
+
+    return photo;
+};
+
+
+// Templates
+static string galleryTemplate(List<String> photos) {
+
+    string response = @$"
+        
+    ";
+
+    foreach (string photo in photos) {
+        response += @$"<img class=""photo"" src=""{photo}""></img>";
+    }
+
+    return response;
+
+};
+
+
+app.Run();
+
+
+public struct Photo {
+    public string filename;
+    public DateTime dateTaken;
+}
