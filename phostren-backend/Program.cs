@@ -61,7 +61,7 @@ app.MapGet("/getwidgetphoto", ([FromQuery(Name = "display_duration")] string dis
     DateTime now = DateTime.Now;
 
     if (latestPhoto.dateTaken > now.AddSeconds(-15)){
-        return @$"<img class=""photo big_photo widget_photo"" src=""{latestPhoto}""></img>";
+        return @$"<img class=""photo big_photo widget_photo"" src=""{latestPhoto.filename}""></img>";
     } else {
         return "";
     }
