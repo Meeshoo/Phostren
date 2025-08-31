@@ -47,7 +47,7 @@ app.MapGet("/getallphotos", () => {
         }
     }
 
-    photos = photos.OrderBy(x => x.dateTaken).ToList();
+    photos = photos.OrderByDescending(x => x.dateTaken).ToList();
 
     return galleryTemplate(photos);
 
