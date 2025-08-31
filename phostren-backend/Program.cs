@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ExifLib;
+using System.Security.Cryptography.X509Certificates;
 
 
 string BASE_URL = "http://127.0.0.1:5500";
@@ -25,7 +26,7 @@ app.UseCors( x => x
 app.MapGet("/getallphotos", () => {
 
     DateTime now = DateTime.Now;
-    List<String> photos = new List<string>();
+    List<Photo> photos = new List<Photo>();
 
     foreach (string file in Directory.GetFiles(PHOTO_LOCATION)) {
 
@@ -35,12 +36,18 @@ app.MapGet("/getallphotos", () => {
         if (reader.GetTagValue<DateTime>(ExifTags.DateTimeDigitized, out datePictureTaken)) {
 
             if (datePictureTaken > now.AddDays(-1)) {
-                photos.Add(file);
+                
+                Photo photo = new() {
+                    filename = file,
+                    dateTaken = datePictureTaken
+                };
+                
+                photos.Add(photo);
             }
         }
     }
 
-    // SORT PHOTOS BY DATE
+    photos = photos.OrderBy(x => x.dateTaken).ToList();
 
     return galleryTemplate(photos);
 
@@ -60,6 +67,7 @@ app.MapGet("/getwidgetphoto", ([FromQuery(Name = "display_duration")] string dis
 
     DateTime now = DateTime.Now;
 
+    // HOW TO DO THIS
     if (latestPhoto.dateTaken > now.AddSeconds(-15)){
         return @$"<img class=""photo big_photo widget_photo"" src=""{latestPhoto.filename}""></img>";
     } else {
@@ -121,14 +129,14 @@ Photo getLatestPhoto() {
 
 
 // Templates
-static string galleryTemplate(List<String> photos) {
+static string galleryTemplate(List<Photo> photos) {
 
     string response = @$"
         
     ";
 
-    foreach (string photo in photos) {
-        response += @$"<img class=""gallery_photo"" src=""{photo}""></img>";
+    foreach (Photo photo in photos) {
+        response += @$"<img class=""gallery_photo"" src=""{photo.filename}""></img>";
     }
 
     return response;
