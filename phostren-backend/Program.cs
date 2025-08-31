@@ -7,6 +7,8 @@ string BASE_URL = "http://127.0.0.1:5500";
 string API_URL = "http://127.0.0.1:8000";
 string PHOTO_LOCATION = "../phostren-frontend/photos";
 
+string latestPhotoTracker = "";
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,13 +28,14 @@ app.UseCors( x => x
 app.MapGet("/getallphotos", () => {
 
     DateTime now = DateTime.Now;
-    List<Photo> photos = new List<Photo>();
+    List<Photo> photos = new();
 
     foreach (string file in Directory.GetFiles(PHOTO_LOCATION)) {
 
-        ExifReader reader = new ExifReader(file);
+        ExifReader reader = new(file);
 
         DateTime datePictureTaken;
+
         if (reader.GetTagValue<DateTime>(ExifTags.DateTimeDigitized, out datePictureTaken)) {
 
             if (datePictureTaken > now.AddDays(-1)) {
@@ -66,13 +69,19 @@ app.MapGet("/getwidgetphoto", ([FromQuery(Name = "display_duration")] string dis
     Photo latestPhoto = getLatestPhoto();
 
     DateTime now = DateTime.Now;
+    DateTime timePhotoCreatedOnServer = new();
 
-    // HOW TO DO THIS
-    if (latestPhoto.dateTaken > now.AddSeconds(-15)){
-        return @$"<img class=""photo big_photo widget_photo"" src=""{latestPhoto.filename}""></img>";
-    } else {
-        return "";
+    if (latestPhoto.filename != latestPhotoTracker) {
+
+        latestPhotoTracker = latestPhoto.filename;
+        timePhotoCreatedOnServer =File.GetCreationTime(latestPhoto.filename);
+
+        if (timePhotoCreatedOnServer < now.AddSeconds(15)) {
+            return @$"<img class=""photo big_photo widget_photo"" src=""{latestPhoto.filename}""></img>";
+        }
     }
+
+    return "";
 
 });
 
@@ -82,7 +91,7 @@ app.MapGet("/imagecleanup", () => {
 
         foreach (string file in Directory.GetFiles(PHOTO_LOCATION)) {
 
-            ExifReader reader = new ExifReader(file);
+            ExifReader reader = new(file);
 
             DateTime datePictureTaken;
             if (reader.GetTagValue<DateTime>(ExifTags.DateTimeDigitized, out datePictureTaken)) {
@@ -104,7 +113,7 @@ Photo getLatestPhoto() {
     foreach (string file in Directory.GetFiles(PHOTO_LOCATION))
     {
 
-        ExifReader reader = new ExifReader(file);
+        ExifReader reader = new(file);
 
         DateTime datePictureTaken;
 
