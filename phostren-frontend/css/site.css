@@ -24,3 +24,8 @@ h2 {
     width: auto;
     height: 1080px;
 }
+
+#latest_photo {
+    margin: auto;
+    text-align: center;
+}
