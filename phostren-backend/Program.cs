@@ -76,13 +76,14 @@ app.MapGet("/getwidgetphoto", ([FromQuery(Name = "display_duration")] double dis
     if (latestPhoto.filename != latestPhotoTracker) {
 
         latestPhotoTracker = latestPhoto.filename;
-        timePhotoCreatedOnServer =File.GetCreationTime(latestPhoto.filename);
-        // DEBUG
-        Console.WriteLine("Created on server: " + timePhotoCreatedOnServer);
 
-        if (timePhotoCreatedOnServer < now.AddSeconds(displayDuration)) {
-            return @$"<img class=""photo big_photo widget_photo"" src=""{latestPhoto.filename}""></img>";
-        }
+    }
+    timePhotoCreatedOnServer =File.GetCreationTime(latestPhoto.filename);
+    // DEBUG
+    Console.WriteLine("Created on server: " + timePhotoCreatedOnServer);
+
+    if (timePhotoCreatedOnServer.AddSeconds(displayDuration) > now) {
+        return @$"<img class=""photo big_photo widget_photo"" src=""{latestPhoto.filename}""></img>";
     }
 
     return "";
