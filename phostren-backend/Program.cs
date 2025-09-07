@@ -64,7 +64,7 @@ app.MapGet("/getlatestphoto", () => {
 
 });
 
-app.MapGet("/getwidgetphoto", ([FromQuery(Name = "display_duration")] string displayDuration) => {
+app.MapGet("/getwidgetphoto", ([FromQuery(Name = "display_duration")] double displayDuration) => {
 
     Photo latestPhoto = getLatestPhoto();
 
@@ -78,7 +78,7 @@ app.MapGet("/getwidgetphoto", ([FromQuery(Name = "display_duration")] string dis
         // DEBUG
         Console.WriteLine("Created on server" + timePhotoCreatedOnServer);
 
-        if (timePhotoCreatedOnServer < now.AddSeconds(15)) {
+        if (timePhotoCreatedOnServer < now.AddSeconds(displayDuration)) {
             return @$"<img class=""photo big_photo widget_photo"" src=""{latestPhoto.filename}""></img>";
         }
     }
