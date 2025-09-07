@@ -4,7 +4,7 @@ using System.Security.Cryptography.X509Certificates;
 
 
 string BASE_URL = "http://127.0.0.1:5500";
-string API_URL = "http://127.0.0.1:8000";
+//string API_URL = "http://127.0.0.1:8000";
 string PHOTO_LOCATION = "../phostren-frontend/photos";
 
 string latestPhotoTracker = "";
@@ -75,6 +75,8 @@ app.MapGet("/getwidgetphoto", ([FromQuery(Name = "display_duration")] string dis
 
         latestPhotoTracker = latestPhoto.filename;
         timePhotoCreatedOnServer =File.GetCreationTime(latestPhoto.filename);
+        // DEBUG
+        Console.WriteLine("Created on server" + timePhotoCreatedOnServer);
 
         if (timePhotoCreatedOnServer < now.AddSeconds(15)) {
             return @$"<img class=""photo big_photo widget_photo"" src=""{latestPhoto.filename}""></img>";
